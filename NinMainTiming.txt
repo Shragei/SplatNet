@@ -1,0 +1,15 @@
+ Magic         Sub  ID   Counter  ms1     ms2     Flags  Slot  Size    ???           NNID          Type  ???                                          HMAC?
+[32 AB 98 64] [01] [00] [00 00]  [FF 77] [00 00] [00]   [01]  [00 00] [00 00 00 03] [7D 04 78 59] [45]  [00 C0 00 00 00 00 00 00] [Payload][padding] [7D F6 19 32 CF 87 E8 A6 23 D4 AB D6 15 4A 77 43]
+
+Magic: magic marker.
+Sub: Some type of subtype indicator.
+ID: The id of target client. If the packet is a broadcast to all clients this will be set to zero
+Counter: big-endian. If ID is zero then counter will be zero (broadcast?)
+ms1: Local time in millseconds truncated to 16bit short big-endian
+ms2: Remote time in millseconds truncated to 16bit short big-endian if ID is zero then this will be zero too.
+Flags: No clue what this is used for. 
+Slot: The lobby slot the player is occupying. Initial connection player will try for slot 2 for some reason.
+Size: Length of the payload minus the overhead as big-endian.
+NNID: Global numerical id for user on Nintendo's network.
+Type: Payload type.
+HMAC: Used to validate and sign the packet. This used to be 128 bits but is now 96 bits.
