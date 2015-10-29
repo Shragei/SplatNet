@@ -1,2 +1,2 @@
-PayloadType 01 (Null Packet)
+PayloadType 00 (Null Packet)
 Always empty.
