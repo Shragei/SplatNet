@@ -7,14 +7,7 @@
     "express":"latest",
     "mongojs":"^1.2.1",
     "pcap":"latest",
-    "browserify":"latest",
-    
-  },
-  "scripts":{
-    "install":"node_modules/.bin/browserify client/app.js -o resources/js/main.js"
-  },
-  "browser":{
-    "angular":"./external/angular/index.js",
-    "jquery":"./external/jquery/index.js"
+    "q":"latest",
+    "lodash":"latest"
   }
 }
