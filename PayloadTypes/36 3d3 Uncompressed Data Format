@@ -2,6 +2,20 @@ After decompressing the zlib payload from Packet 36 Subtype 03-d3, the resulting
 Type Length  Payload
 [20] [06 00] [010105]
 
+Payload section seems to be big endian, unlike header, which is little-endian
+
 The length includes the header, as the example above shows.
 
 There can be more than one subpacket in each decompressed payload.
+
+Type 30:
+
+[30] [31 00] [01 03] [xx xx] [xx xx] [data]
+e.g
+[30] [31 00] [01 03] [01 04] [00 fa] 04 00 00 00 ff 00 08 66 a0 ff ff ff ff ff ff 55 55 61 f8 13 7a b5 1f c3 2c 40 89 86 82 73 2f 60 f4 fe 73 d7 ff fe 0a 0d]
+                     |upward counter; never decreases
+                             |counter that is always a few behind the upward counter; doesn't increase as frequently
+[30] [07 00] [01 04] [xx xx] <- same upward counter as previous type 103; probably an ACK packet for 103
+[30] [3a 00] [03 03] [00 01] [00 01] 01 00 00 00 ff 00 08 8b 39 ff ff ff ff ff ff 55 55 [c2 20 00 00] [42 80 00 00] [c4 13 80 00] 00 00 00 00 80 00 00 00 3f 7f ff ff 00 78 00 77 03 00 00 00
+Contains 3 floats corresponding to the spawn point (-40, 60, -590) of Blackbelly Skatepark, the map the packet was captured from; possibly a respawn/set spawn point packet?
+[30] [07 00] [03 04] [xx xx] <- same upward counter as type 303; probably an ACK packet for 303; sometimes sent without a corresponding 303 though
