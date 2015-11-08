@@ -1,0 +1,7 @@
+After decompressing the zlib payload from Packet 36 Subtype 03-d3, the resulting data is of the form
+Type Length  Payload
+[20] [06 00] [010105]
+
+The length includes the header, as the example above shows.
+
+There can be more than one subpacket in each decompressed payload.
