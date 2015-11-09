@@ -23,7 +23,7 @@ sub 0xa1
 [03]      [a1]    [0368] 03fd0000000000 c800000142000007db013dde38
 sub 0xa2
 [03]      [a2]    [0170] 02060000000000 0800000068000003cf00ca3f74
-sub 0xd3 (contains movement data variable length payload, encoded)
+sub 0xd3 (contains movement data variable length payload, zlib compressed - decompress from zlib header of 7801 at payload offset 1)
 [03]      [d3]    [0182] 03fd0000000000 01780152606360646405000000ffff030000ee002e
 sub 0xc1
 [03]      [c1]    [03b4] 03fd0000000000 c80000022e0000081d01030002000000ff
