@@ -8,11 +8,11 @@ var config=require('../config.json');
 var mongojs=require('mongojs');
 var db=mongojs(config.dburl,['Session','Packets','Messages']);
 
-var sessionId=crypto.randomBytes(6).toString('base64');console.log(sessionId)
+var sessionId=crypto.randomBytes(6).toString('base64');
 if(process.argv.length===3){ //override default sessionId with user provided sessionId
   sessionId=process.argv[2];
 }
-console.log(sessionId);
+
 
 db.Session.createIndex({SessionId:1});
 db.Packets.createIndex({SessionId:1});
@@ -34,7 +34,7 @@ decoder.on('data',function(data){
   }
 });
 
-process.on('SIGINT',function(){console.log('here');
+process.on('SIGINT',function(){
   var endtime=Date.now()/1000
   db.Session.save({
     SessionId:sessionId,
