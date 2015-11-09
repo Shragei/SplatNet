@@ -1,12 +1,12 @@
 //requires root to use pcap
 var crypto=require('crypto');
-var mongojs=require('mongojs')
+var mongojs=require('mongojs');
 var Capture=require('../lib/net/Capture');
 var Decoder=require('../lib/net/Decoder');
 var config=require('../config.json');
 
 var mongojs=require('mongojs');
-var db=mongojs(config.dburl,['Session','Packets','Messages']);
+var db=mongojs(config.dburl,['Session','Packets']);
 
 var sessionId=crypto.randomBytes(6).toString('base64');
 if(process.argv.length===3){ //override default sessionId with user provided sessionId
