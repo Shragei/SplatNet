@@ -1,0 +1,4 @@
+{
+  "dburl":"address/db", //address to the mongodb database
+  "TargetMAC":"xx:xx:xx:xx:xx:xx" //MAC address of device to capture packets from.
+}
