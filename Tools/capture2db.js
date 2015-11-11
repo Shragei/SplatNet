@@ -3,6 +3,7 @@ var crypto=require('crypto');
 var mongojs=require('mongojs');
 var Capture=require('../lib/net/Capture');
 var Decoder=require('../lib/net/Decoder');
+var Dissectors=require('../lib/dissectors');
 var config=require('../config.json');
 
 var mongojs=require('mongojs');
@@ -20,6 +21,8 @@ db.Packets.createIndex({Timestamp:1});
 
 var cap=new Capture(config.TargetMAC);
 var decoder=new Decoder();
+Dissectors.AddStuctures(decoder);
+
 var startTime=Date.now()/1000;
 
 cap.pipe(decoder);
