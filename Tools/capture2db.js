@@ -7,6 +7,10 @@ var Dissectors=require('../lib/dissectors');
 var config=require('../config.json');
 
 var mongojs=require('mongojs');
+
+if(process.env.SplatNet_db_url!==undefined) //override the config
+  config.dburl=process.env.SplatNet_db_url;
+
 var db=mongojs(config.dburl,['Session','Packets']);
 
 var sessionId=crypto.randomBytes(6).toString('base64');
