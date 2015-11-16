@@ -11,7 +11,7 @@ var mongojs=require('mongojs');
 if(process.env.SplatNet_db_url!==undefined) //override the config
   config.dburl=process.env.SplatNet_db_url;
 
-var db=mongojs(config.dburl,['Session','Packets']);
+var db=mongojs(config.dburl,['Sessions','Packets']);
 
 var sessionId=crypto.randomBytes(6).toString('base64');
 if(process.argv.length===3){ //override default sessionId with user provided sessionId
@@ -19,7 +19,7 @@ if(process.argv.length===3){ //override default sessionId with user provided ses
 }
 
 
-db.Session.createIndex({SessionId:1});
+db.Sessions.createIndex({SessionId:1});
 db.Packets.createIndex({SessionId:1});
 db.Packets.createIndex({Timestamp:1});
 
@@ -43,7 +43,7 @@ decoder.on('data',function(data){
 
 process.on('SIGINT',function(){
   var endtime=Date.now()/1000
-  db.Session.save({
+  db.Sessions.save({
     SessionId:sessionId,
     StartStart:startTime,
     EndTime:endtime,
