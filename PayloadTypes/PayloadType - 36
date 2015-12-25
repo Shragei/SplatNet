@@ -5,7 +5,9 @@ Sub 0x11
 [03]      [11]    [011b] 00000014000000 0000cdb30a
 Sub 0x21 
 [03]      [21]    [011f] 00000015000000 2208b23bae0000000000ed586b
-Sub 0x31,0x32,0x33 has no payload
+Sub 0x31 sent right after handshake
+[03]      [31]    [0167] 0000004e
+Sub 0x32,0x33 has no payload 
 [03]      [31]    [0167] 0000004e
 Sub 0x41
 [03]      [41]    [3828] 00000243000000 fe

@@ -50,8 +50,9 @@ process.on('SIGINT',function(){
     Duration:endtime-startTime,
     PacketCount:packetCount,
     TotalData:totalData
+  },function(){
+      console.log("Session: "+sessionId+" Duration: "+(endtime-startTime));
+      process.exit();
   });
-  console.log("Session: "+sessionId+" Duration: "+(endtime-startTime));
-  process.exit();
 });
 cap.Start(sessionId);

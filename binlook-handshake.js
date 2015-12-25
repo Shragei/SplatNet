@@ -13,7 +13,7 @@ var match=new Buffer([0x03,val]);
 var set={};
 var lastBuff=new Buffer([]);
 var maxlog;
-var cursor=db.Packets.find({"Frame.IP.UDP.NinFrame.Event.Type":'Player',SessionId:process.argv[2],Direction:'Outbound'}).sort({Timestamp:1});
+var cursor=db.Packets.find({"Frame.IP.UDP.NinFrame.PayloadType":1,SessionId:process.argv[2],Direction:process.argv[3]}).sort({Timestamp:1});
 
 cursor.on('data',function(doc){
  // if(process.argv.length===3)
@@ -35,7 +35,9 @@ function uniq(packet){
 }
 var count=0;
 function viewpacket(packet){
-  var el=packet.Frame.IP.UDP.NinFrame.Event.Payload.buffer;
+  var el=packet.Frame.IP.UDP.NinFrame.Payload.buffer;
+  var NinFrame=packet.Frame.IP.UDP.NinFrame;
+  
   if(el.compare(lastBuff)!==0)
     lastBuff=el;
   else return;
@@ -50,22 +52,16 @@ function viewpacket(packet){
   }
   //ret=ret.join('');
   ret=buf.toString('hex');
- if(buf[0]===0x10&&buf[1]===0x3c){
+ if(NinFrame.Handshake.Type==="Name"){
    // console.log(ret.substr(62,10));
-    console.log(ret);
+   var name=new Buffer(31);
+   var nameLength=buf[68];
+   buf.slice(37,37+31).copy(name);
+   name=name.toString('ucs2');
+   console.log(NinFrame.Slot+' '+name.substr(0,nameLength));
  //   euclidean(buf,8);
-  }
+  // cursor.destroy();
+ }
   if(maxlog!==undefined&&(count++)>maxlog)
     cursor.destroy();
-}
-function leExpand(buf,off){
-  var t=new Buffer([0,buf[off+2],buf[off+1],buf[off]]);
-  return t.readUInt32BE(0);
-}
-function euclidean(buff,pos){
-  buff=buff.slice(pos,pos+9);
-  console.log('('+leExpand(buff,0)+','+leExpand(buff,3)+','+leExpand(buff,6)+')');
-}
-function eulerAngles(buff){
-  console.log('('+buff.readFloatBE(0)+','+buff.readFloatBE(4)+')');
 }

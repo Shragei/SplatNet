@@ -8,6 +8,7 @@
     "mongojs":"^1.2.1",
     "pcap":"latest",
     "q":"latest",
-    "lodash":"latest"
+    "lodash":"latest",
+    "socket.io":"latest"
   }
 }
