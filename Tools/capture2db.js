@@ -33,10 +33,15 @@ cap.pipe(decoder);
 
 var packetCount=0;
 var totalData=0;
+var startTimestamp;
+var endTimestamp;
 decoder.on('data',function(data){
   if(data.Frame.IP!==undefined&&data.Frame.IP.UDP!==undefined&&data.Frame.IP.UDP.NinFrame!==undefined){//ignore all packets that don't have have the ninFrame
     packetCount++;
     totalData+=data.Frame.IP.UDP.Payload.length
+    if(startTimestamp===undefined)
+      startTimestamp=data.Timestamp;
+    endTimestamp=data.Timestamp;
     db.Packets.save(data);
   }
 });
@@ -45,9 +50,9 @@ process.on('SIGINT',function(){
   var endtime=Date.now()/1000
   db.Sessions.save({
     SessionId:sessionId,
-    StartStart:startTime,
-    EndTime:endtime,
-    Duration:endtime-startTime,
+    StartTime:startTimestamp,
+    EndTime:endTimestamp,
+    Duration:endTimestamp-startTimestamp,
     PacketCount:packetCount,
     TotalData:totalData
   },function(){
