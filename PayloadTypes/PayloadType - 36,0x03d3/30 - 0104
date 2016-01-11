@@ -1,2 +1,11 @@
+Act packet for 30 - 0103
+
+cl - Segment Class
+sz - Segment Size
+sb - Segment Sub
+at - Segment Action
+seq - Segment sequence number
+
+
 [cl][sz]    [sb][at][seq ] 
  30  07  00  01  04  0035

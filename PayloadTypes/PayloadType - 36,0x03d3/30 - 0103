@@ -11,11 +11,18 @@ above
 403600 010000000011011000000000
 
 
+cl - Segment Class
+sz - Segment Size
+sb - Segment Sub
+at - Segment Action
+seq - Segment sequence number
+pri - Segment Priority
+frmCnt - Frame Counter
 
 =======
 Seeker
 
-[cl][sz]    [sb][at]                  [pri ]  [frmCnd]                         [X-axis][Y-axis][Z-axis]
+[cl][sz]    [sb][at][seq ]            [pri ]  [frmCnd]                         [X-axis][Y-axis][Z-axis]
  30  31  00  01  03  0001  0000 020000 017f 00 0ba9b1 fffffffffffdd555  c1f893  0d2e20  003640  b53f79  00 204080 ff 73e1fffe000c
  30  31  00  01  03  0002  0000 020000 017f 00 0ba9b3 fffffffffffdd555  c1f8d3  162e20  003640  1c4379  00 204080 ff 7be1fffe000e
  30  31  00  01  03  0003  0000 020000 017f 00 0ba9b5 fffffffffffdd555  c1f853  202e20  003640  864679  00 204080 ff 7be1fffe0000
