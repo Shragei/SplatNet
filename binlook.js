@@ -1,6 +1,8 @@
+var Pack=require('./lib/Pack');
 var mongojs=require('mongojs');
 var config=require('./config.json');
 var db=mongojs(config.dburl,['Packets']);
+var pack=new Pack();
 var offset=0;
 var limit=2000;
 var minlength=0;
@@ -17,7 +19,7 @@ var maxlog;
 var cursor=db.Packets.find(
   {"Frame.IP.UDP.NinFrame.Event.Type":'Player',SessionId:process.argv[2],Direction:process.argv[3]},
  // {"Frame.IP.UDP.NinFrame.Event.Type":{$exists:true},SessionId:process.argv[2],Direction:process.argv[3]},
-  {'Timestmap':1,SessionId:1,Direction:1,Frame:1}).sort({Timestamp:1});
+  {'Timestamp':1,SessionId:1,Direction:1,Frame:1}).sort({Timestamp:1});
 /*var query=[
   {
     $match:{
@@ -72,9 +74,11 @@ function uniq(packet){
   }
 }
 var count=0;
+
 function viewpacket(packet){
   var el=packet.Frame.IP.UDP.NinFrame.Event.Payload.buffer;
-
+  var timestamp=packet.Timestamp;
+  
   var blocks=breakBlock(el);
   for(var i=0;i<blocks.length;i++){
     if(blocks[i].slice(0,1).toString('hex')===process.argv[4]&&blocks[i].slice(3,5).toString('hex')===process.argv[5]){
@@ -87,18 +91,45 @@ function viewpacket(packet){
         var off=parseInt(process.argv[6]);
         var size=parseInt(process.argv[7]);
         var p=blocks[i].slice(off,off+size);
-        switch(process.argv[8]){
-          case 'L':
-            var t=new Buffer(p.length);
-            for(var k=p.length-1,j=0;k>=0;k--,j++)
-              t[j]=p[k];
-            p=t;
-            console.log(p.toString('hex'));
-          break;
-          case '24L':
-            console.log(readInt24LE(p,0));
+        if(process.argv.length==9){
+          var actions=process.argv[8].split('');
+          for(var a=0;a<actions.length;a++){
+            switch(actions[a]){
+              case 'E':
+                p=switchEndian(p);
+                break;
+              case 'L':
+                p=rotL(p);
+                break;
+              case 'R':
+                p=rotR(p);
+                break;
+              case 'U':
+                console.log(readUInt(p));
+                break;
+              case 'S':
+                console.log(readInt(p));
+                break;
+              case 'H':
+                console.log(timestamp+' '+p.toString('hex'));
+                break;
+              case 'B':
+                console.log(toBin(p));
+                break;
+              case 'F':
+                console.log(p.readFloatBE(0));
+                break;
+              case 'T':
+                test(p);
+                break;
+              case 'Q':
+                testB(p);
+                break;
+            }
+          }
+        }else{
+          console.log(p.toString('hex'))
         }
-        
       }else{
         console.log(blocks[i].toString('hex'));
       }
@@ -113,6 +144,76 @@ function viewpacket(packet){
   if(maxlog!==undefined&&(count++)>maxlog)
     cursor.destroy();
 }
+
+function test(p){
+  var t=new Buffer(10);
+  var int=new Buffer(4);
+  
+  for(var i=p.length-1,k=0;i>=0;i--,k++)
+    t[k]=p[i];
+  pack.Set(t);
+  pack.Copy(3,int);
+  var z=int.readUInt32BE(0);
+  pack.Shift(1);
+  pack.Copy(3,int);
+  var y=int.readUInt32BE(0);
+  pack.Shift(1);
+  pack.Copy(3,int);
+  var x=int.readUInt32BE(0);
+  console.log('('+x+','+y+','+z+')');
+}
+
+function toBin(p){
+  var o=[];
+  var f='00000000';
+  for(var i=0;i<p.length;i++){
+    var t=p[i].toString(2);
+    t=f.substr(0,8-t.length)+t;
+    o.push(t);
+  }
+  return o.join('');
+}
+
+function readUInt(p){
+  var t=new Buffer([0,0,0,0]);
+  for(var i=p.length-1,k=3;k>=0;i--,k--)
+    t[k]=p[i];
+  return t.readUInt32BE(0);
+}
+function readInt(b){
+  var t=new Buffer([0,0,0,0]);
+  for(var i=0;i<t.length&&i<b.length;i++)
+    t[i]=b[i];
+  var shift=Math.min(4-b.length,0)*8;
+  return t.readInt32BE(0)>>shift;
+}
+
+
+function rotR(p){
+  var t=new Buffer(p.length);
+  var remander=p[p.length-1]&0x01;
+  for(var i=0;i<p.length;i++){
+    t[i]=(p[i]>>1)|(0x80*remander);
+    remander=p[i]&0x01;
+  }
+  return t;
+}
+function rotL(p){
+  var t=new Buffer(p.length);
+  var remander=p[0]&0x80;
+  for(var i=p.length-1;i>=0;i--){
+    t[i]=(p[i]<<1)|(remander>>7);
+    remander=p[i]&0x80;
+  }
+  return t;
+}
+function switchEndian(p){
+  var t=new Buffer(p.length);
+  for(var k=p.length-1,j=0;k>=0;k--,j++)
+    t[j]=p[k];
+  return t;
+};
+
 function breakBlock(buf){
   var off=0;
   var blocks=[];
@@ -144,10 +245,4 @@ function euclidean(buff,pos){
 }
 function eulerAngles(buff){
   console.log('('+buff.readFloatBE(0)+','+buff.readFloatBE(4)+')');
-}
-
-function readInt24LE(buffer,offset){
-  var b=new Buffer([0,0,0,0]);
-  b[3]=buffer[offset+2];b[2]=buffer[offset+1];b[1]=buffer[offset];b[0]=0;//shift to the left one byte to maintain number sign
-  return b.readInt32LE(0)>>8;//move the number back 8 bits to return orginal.
 }
